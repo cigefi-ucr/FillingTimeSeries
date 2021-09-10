@@ -1,0 +1,11 @@
+README.md
+setup.cfg
+setup.py
+FillingTimeSeries/FillingMethods.py
+FillingTimeSeries/PreprocessingFillingMethods.py
+FillingTimeSeries/__init__.py
+FillingTimeSeries.egg-info/PKG-INFO
+FillingTimeSeries.egg-info/SOURCES.txt
+FillingTimeSeries.egg-info/dependency_links.txt
+FillingTimeSeries.egg-info/requires.txt
+FillingTimeSeries.egg-info/top_level.txt

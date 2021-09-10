@@ -1,9 +1,8 @@
 # Filling Time Series
+
 ## Filling missing values in geophysical time series
 
-[![FTS|FillingTimeSeries](https://repository-images.githubusercontent.com/404879203/f4deb7ec-6b24-4ca9-89eb-f1efc8d2fd55)]
-
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://github.com/rolandojduartem/FillingTimeSeries)
+![FTS|FillingTimeSeries](https://repository-images.githubusercontent.com/404879203/f4deb7ec-6b24-4ca9-89eb-f1efc8d2fd55)
 
 ## About Filling Time Series
 Filling Time Series is a Python package to help professionals work with geophysical time series by filling missing values in their data developed at the Centro de Investigaciones Geofísicas (CIGEFI), Universidad de Costa Rica (UCR).

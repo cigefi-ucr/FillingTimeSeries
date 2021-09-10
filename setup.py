@@ -1,3 +1,4 @@
+import setuptools
 from distutils.core import setup
 from pathlib import Path
 this_directory = Path(__file__).parent
@@ -6,16 +7,17 @@ long_description = (this_directory / "README.md").read_text()
 setup(
   name = 'FillingTimeSeries',    
   packages = ['FillingTimeSeries'], 
-  version = '0.7.0',   
+  version = '0.7.1',   
   license='MIT', #License from here: https://help.github.com/articles/licensing-a-repository
   description = 'Filling Time series: Package to fill missing values in geophysical time series in Python',   #Short description
   long_description = long_description,
-  long_description_content_type = 'text/markdown',
+  long_description_content_type = "text/markdown",
   author = 'Rolando Jesus Duarte Mejias & Erick Rivera Fernandez',    
   author_email = 'rolando.duartemejias@gmail.com',
   url = 'https://github.com/rolandojduartem/FillingTimeSeries', #github or website
-  download_url = 'https://github.com/rolandojduartem/FillingTimeSeries/archive/refs/tags/v_0_7_0.tar.gz',    #Download file
+  download_url = 'https://github.com/rolandojduartem/FillingTimeSeries/archive/refs/tags/v_0_7_1.tar.gz',    #Download file
   keywords = ['Time Series', 'Missing values', 'Metereology', "Geophysics", "Metereological"],
+  setup_requires=['wheel'],
   install_requires=[       # I get to this in a second
           'statsmodels',
           'scikit-learn',
