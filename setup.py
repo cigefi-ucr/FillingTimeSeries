@@ -2,7 +2,7 @@ from distutils.core import setup
 from pathlib import Path
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
-
+print(this_directory)
 setup(
   name = 'FillingTimeSeries',    
   packages = ['FillingTimeSeries'], 
@@ -10,7 +10,6 @@ setup(
   license='MIT', #License from here: https://help.github.com/articles/licensing-a-repository
   description = 'Filling Time series: Package to fill missing values in geophysical time series in Python',   #Short description
   long_description=long_description,
-  long_description_content_type='text/markdown',
   author = 'Rolando Jesus Duarte Mejias & Erick Rivera Fernandez',    
   author_email = 'rolando.duartemejias@gmail.com',
   url = 'https://github.com/rolandojduartem/FillingTimeSeries', #github or website
