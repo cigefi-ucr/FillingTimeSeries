@@ -9,8 +9,8 @@ setup(
   version = '0.8.0',   
   license='MIT', #License from here: https://help.github.com/articles/licensing-a-repository
   description = 'Filling Time series: Package to fill missing values in geophysical time series in Python',   #Short description
-  long_description=long_description,
-  long_description_content_type='text/markdown',
+  long_description = long_description,
+  long_description_content_type = 'text/markdown',
   author = 'Rolando Jesus Duarte Mejias & Erick Rivera Fernandez',    
   author_email = 'rolando.duartemejias@gmail.com',
   url = 'https://github.com/rolandojduartem/FillingTimeSeries', #github or website

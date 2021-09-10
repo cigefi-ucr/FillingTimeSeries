@@ -25,7 +25,8 @@ Documentation will be available soon.
 ## Installation
 
 - Using pip:
-```sh
+
+```
 pip install FillingTimeSeries
 ```
 
