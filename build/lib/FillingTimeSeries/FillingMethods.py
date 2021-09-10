@@ -11,7 +11,7 @@ from matplotlib.pyplot import errorbar, figure, xlabel, ylabel, title, show #Gra
 from sklearn.decomposition import PCA #Applies principal components transformations
 from sklearn.preprocessing import StandardScaler #Normalizes data
 from statsmodels.tsa.ar_model import AutoReg #Autoregression library
-from PreprocessingFillingMethods import Preprocessing # Created module for data processing purporses
+from FillingTimeSeries.PreprocessingFillingMethods import Preprocessing # Created module for data processing purporses
 
 rcParams["font.family"] = "sans-serif"
 options.mode.chained_assignment = None #Avoiding warning messages

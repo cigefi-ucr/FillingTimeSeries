@@ -1,12 +1,12 @@
 Metadata-Version: 2.1
 Name: FillingTimeSeries
-Version: 0.7.1
+Version: 0.7.2
 Summary: Filling Time series: Package to fill missing values in geophysical time series in Python
 Home-page: https://github.com/rolandojduartem/FillingTimeSeries
 Author: Rolando Jesus Duarte Mejias & Erick Rivera Fernandez
 Author-email: rolando.duartemejias@gmail.com
 License: MIT
-Download-URL: https://github.com/rolandojduartem/FillingTimeSeries/archive/refs/tags/v_0_7_1.tar.gz
+Download-URL: https://github.com/rolandojduartem/FillingTimeSeries/archive/refs/tags/v_0_7_2.tar.gz
 Description: # Filling Time Series
         
         ## Filling missing values in geophysical time series
