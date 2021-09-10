@@ -31,6 +31,7 @@ pip install FillingTimeSeries
 
 ## Bug report
 Bug reports can be submitted to the issue tracker at:
+
 [https://github.com/rolandojduartem/FillingTimeSeries/issues](https://github.com/rolandojduartem/FillingTimeSeries/issues)
 
 ## License
@@ -38,4 +39,3 @@ Bug reports can be submitted to the issue tracker at:
 MIT License
 
 **Free Software**
-
