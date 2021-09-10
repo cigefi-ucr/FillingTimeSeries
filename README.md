@@ -1,4 +1,4 @@
-# Filling Time Series
+# FillingTimeSeries
 ## _Filling missing values in geophysical time series_
 
 [![FTS|FillingTimeSeries](https://repository-images.githubusercontent.com/404879203/f4deb7ec-6b24-4ca9-89eb-f1efc8d2fd55)](#)
