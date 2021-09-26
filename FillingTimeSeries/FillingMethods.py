@@ -1,17 +1,33 @@
 """
-Note: Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
+Note: V 0.7.3 Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
       Python version was developed by Rolando Duarte and Erick Rivera
       Centro de Investigaciones Geofísicas (CIGEFI)
       Universidad de Costa Rica (UCR)
 """
+
+"""
+MIT License
+Copyright 2021 Rolando Jesus Duarte Mejias and Erick Rivera Fernandez
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+and associated documentation files (the "Software"), to deal in the Software without restriction, 
+including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
+
+from matplotlib import rcParams
 from numpy import sqrt, abs, max, delete, where, arange, all #Handling arrays
 from pandas import read_csv, DataFrame, options #Handles datasets
-from matplotlib import rcParams
-from matplotlib.pyplot import errorbar, figure, xlabel, ylabel, title, show #Graphs
 from sklearn.decomposition import PCA #Applies principal components transformations
 from sklearn.preprocessing import StandardScaler #Normalizes data
 from statsmodels.tsa.ar_model import AutoReg #Autoregression library
 from FillingTimeSeries.PreprocessingFillingMethods import Preprocessing # Created module for data processing purporses
+from matplotlib.pyplot import errorbar, figure, xlabel, ylabel, title, show #Graphs
 
 rcParams["font.family"] = "sans-serif"
 options.mode.chained_assignment = None #Avoiding warning messages
@@ -46,7 +62,7 @@ class AutoRegression:
         Returns
         -------
         serie: pandas serie
-            pandas serie changing the values using nanIndex
+            pandas serie changing the missing values using nanIndex
         """
         model = AutoReg(serie, lags = k, old_names = True) #Autoregression
         model_fit = model.fit()
@@ -68,13 +84,14 @@ class AutoRegression:
             Tolerance value of difference between previous filled serie and current filled serie
         itermax: int
             Maximum iterations to find a filled serie that complies tolerance condition
-        
+        valueMin: float
+            The minimum value allowed after applying the regression method.
+
         Returns
         -------
         dfPF: pandas-dataframe
             Pandas dataframe using past and future values to fill missing values
         """
-        self.handlingErrors(k = k)
         dfPF = DataFrame({})
         for column in self.df.columns:
             pastValues, pastNanIndex = self.pss.changeNanMean(self.df[column]) #Missing values -> mean value
@@ -97,55 +114,11 @@ class AutoRegression:
                     futureValues, _ = self.pss.reverseChangeNanMean(dfPF[column])
             dfPF[column][dfPF[column] < valueMin] = valueMin
         
-        #Setting parameter to graph some columns
-        """
-        if len(dfPF.columns) <= 3:
-            nColumns = len(dfPF.columns)
-            nRows = 1
-        else:
-            nColumns = 3
-            nRows = len(dfPF.columns) // 3
-        fig, axArray = subplots(nRows, nColumns, squeeze=False, sharex = True, figsize = (20, 20))
-        title("Some filled columns")
-        index = 0
-        try:
-            for i,ax_row in enumerate(axArray):
-                for j,axes in enumerate(ax_row):
-                    axes.plot(self.df.index, dfPF[dfPF.columns[index]], color = "red")
-                    axes.plot(self.df.index, self.df[self.df.columns[index]], color = "blue")
-                    axes.set_title("Column "+ str(index) + ": original and filled values", size = "xx-small")
-                    axes.set_xlabel("Index", size = "xx-small")
-                    axes.set_ylabel("Column " + str(index) + " magnitude", size = "xx-small")
-                    index = index + 1
-        except:
-            pass
-        legend(["Predicted values", "Real values"])
-        show()
-        """
         return dfPF
-
-    def handlingErrors(self, k):
-        """
-        Handles errors
-        
-        Parameters
-        ----------
-        k: int
-            Lags value for autoregression
-        """
-        dfRows = self.dfRows
-        if k < 0 :
-            #Error if k is negative
-            print("ERROR: k coefficient is a negative number. Aborting ...")
-            exit()
-        elif k > dfRows: 
-            #Error if k is greater than df rows
-            print("ERROR: k coefficient is greater than the number of data rows (" + str(dfRows) + "). Aborting ...")
-            exit()
 
 class PrincipalComponentAnalysis:
     """
-    Applies Ulrich & Clayton autoregression method
+    Applies principal component method
 
     Parameters
     ----------
@@ -174,9 +147,9 @@ class PrincipalComponentAnalysis:
         evr = pca.explained_variance_ratio_
         err = evr * sqrt(2 / self.dfRows)
         xRange = arange(1, len(evr) + 1)
-        upperRange = len(evr) 
+        upperRange = len(evr) - 1
         figure(figsize = (20, 20))
-        errorbar(xRange, evr, yerr = err, fmt = "o", color = "#9b6dff", ecolor = "black", capsize = 6)
+        errorbar(xRange, evr, yerr =  err, fmt = "o", color = "#9b6dff", ecolor = "black", capsize = 6)
         title("Explained variance ratio vs. principal components")
         xlabel("Principal components")
         ylabel("Explained variance ratio")
@@ -195,6 +168,8 @@ class PrincipalComponentAnalysis:
             Tolerance value of difference between previous filled dataframe and current filled dataframe
         itermax: int
             Maximum iterations to find a filled dataframe that complies tolerance condition
+        valueMin: float
+            The minimum value allowed after applying the regression method.
         
         Returns
         -------
@@ -224,29 +199,5 @@ class PrincipalComponentAnalysis:
 
         for column in dfActual.columns:
             dfActual[column][dfActual[column] < valueMin] = valueMin
-        #Setting parameters to graph some columns
-        """
-        if len(dfActual.columns) <= 3:
-            nColumns = len(dfActual.columns)
-            nRows = 1
-        else:
-            nColumns = 3
-            nRows = len(dfActual.columns) // 3
-        fig, axArray = subplots(nRows, nColumns, squeeze=False, sharex = True, figsize = (20, 20))
-        title("Some filled columns")
-        index = 0
-        try:
-            for i,ax_row in enumerate(axArray):
-                for j,axes in enumerate(ax_row):
-                    axes.plot(self.df.index, dfActual[dfActual.columns[index]], color = "red")
-                    axes.plot(self.df.index, self.df[self.df.columns[index]], color = "blue")
-                    axes.set_title("Column "+ str(index) + ": original and filled values", size = "xx-small")
-                    axes.set_xlabel("Index", size = "xx-small")
-                    axes.set_ylabel("Column " + str(index) + " magnitude", size = "xx-small")
-                    index = index + 1
-        except:
-            pass
-        legend(["Predicted values", "Real values"])
-        show()
-        """
+
         return dfActual
