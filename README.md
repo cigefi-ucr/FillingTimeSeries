@@ -4,8 +4,13 @@
 
 ![FTS|FillingTimeSeries](https://repository-images.githubusercontent.com/404879203/f4deb7ec-6b24-4ca9-89eb-f1efc8d2fd55)
 
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) [![PyPI pyversions](https://img.shields.io/pypi/pyversions/FillingTimeSeries.svg)](https://pypi.python.org/pypi/FillingTimeSeries/) [![PyPI status](https://img.shields.io/pypi/status/FillingTimeSeries.svg)](https://pypi.python.org/pypi/FillingTimeSeries/) [![PyPI license](https://img.shields.io/pypi/l/FillingTimeSeries.svg)](https://pypi.python.org/pypi/FillingTimeSeries/)
+
 ## About Filling Time Series
 Filling Time Series is a Python package to help professionals work with geophysical time series by filling missing values in their data developed at the Centro de Investigaciones Geofísicas (CIGEFI), Universidad de Costa Rica (UCR).
+
+## Last updates
+- Documentation is completed in the code
 
 ## Documentation
 Documentation will be available soon.

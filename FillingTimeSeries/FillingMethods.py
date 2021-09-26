@@ -85,7 +85,7 @@ class AutoRegression:
         itermax: int
             Maximum iterations to find a filled serie that complies tolerance condition
         valueMin: float
-            The minimum value allowed after applying the regression method.
+            The minimum value allowed after applying the principal component method.
 
         Returns
         -------
