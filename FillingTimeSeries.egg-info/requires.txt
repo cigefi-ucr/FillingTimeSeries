@@ -1,3 +1,0 @@
-statsmodels
-scikit-learn
-matplotlib
