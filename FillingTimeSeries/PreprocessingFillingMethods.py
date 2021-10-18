@@ -1,5 +1,5 @@
 """
-Note: V 0.7.3 Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
+Note: V 0.8.0 Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
       Python version was developed by Rolando Duarte and Erick Rivera
       Centro de Investigaciones Geofísicas (CIGEFI)
       Universidad de Costa Rica (UCR)
@@ -44,14 +44,13 @@ class Preprocessing:
                 -------
                 serie: pandas serie
                         pandas serie changing missing values to mean values
-                nan_index: array
+                nanIndex: array
                         missing values indexes
                 """
                 serie = serie.copy()
-                #nan_values = serie[serie.isna()]
-                nan_index = serie[serie.isna()].index
-                serie.fillna(value = serie.mean(axis = 0), axis = 0, inplace = True)
-                return serie, nan_index
+                nanIndex = serie[serie.isna()].index
+                serie.fillna(value = serie.mean(axis=0), axis=0, inplace=True)
+                return serie, nanIndex
         
         def reverseChangeNanMean(self, serie):
                 """
@@ -64,15 +63,15 @@ class Preprocessing:
                 
                 Returns
                 -------
-                reverse_serie: pandas serie
+                reverseSerie: pandas serie
                         Reversed pandas serie changing missing values to mean values
-                reverse_nan_index: array
+                reverseNanIndex: array
                         missing values indexes
                 """
-                reverse_serie = serie[::-1].copy()
-                reverse_serie.index = serie.index
-                reverse_serie, reverse_nan_index = self.changeNanMean(reverse_serie)
-                return reverse_serie, reverse_nan_index
+                reverseSerie= serie[::-1].copy()
+                reverseSerie.index = serie.index
+                reverseSerie, reverseNanIndex = self.changeNanMean(reverseSerie)
+                return reverseSerie, reverseNanIndex
         
         def changeDfNanMean(self, df):
                 """
@@ -87,10 +86,10 @@ class Preprocessing:
                 -------
                 df: pandas dataframe
                         pandas dataframe changing missing values to their respective column mean values
-                nan_index: array
+                nanIndexColumns: array
                         missing values in each column indexes 
                 """
                 df = df.copy()
-                nan_index_columns = [df[column][df[column].isna()].index for column in df.columns]
-                df.fillna(value = df.mean(axis = 0), axis = 0, inplace = True)   
-                return df, nan_index_columns    
+                nanIndexColumns = [df[column][df[column].isna()].index for column in df.columns]
+                df.fillna(value = df.mean(axis=0), axis=0, inplace=True)   
+                return df, nanIndexColumns    

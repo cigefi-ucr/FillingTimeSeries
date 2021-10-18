@@ -7,15 +7,15 @@ long_description = (this_directory / "README.md").read_text()
 setup(
   name = 'FillingTimeSeries',    
   packages = ['FillingTimeSeries'], 
-  version = '0.7.3',   
-  license='MIT', #License from here: https://help.github.com/articles/licensing-a-repository
-  description = 'Filling Time series: Package to fill missing values in geophysical time series in Python',   #Short description
+  version = '0.8.0',   
+  license='MIT', # License from here: https://help.github.com/articles/licensing-a-repository
+  description = 'Filling Time series: Package to fill missing values in geophysical time series in Python', # Short description
   long_description = long_description,
   long_description_content_type = "text/markdown",
   author = 'Rolando Jesus Duarte Mejias, Erick Rivera Fernandez',    
-  author_email = 'rolando.duartemejias@gmail.com',
-  url = 'https://github.com/rolandojduartem/FillingTimeSeries', #github or website
-  download_url = 'https://github.com/rolandojduartem/FillingTimeSeries/archive/refs/tags/v_0_7_3.tar.gz',    #Download file
+  author_email = 'rolando.duartemejias@ucr.ac.cr',
+  url = 'https://github.com/rolandojduartem/FillingTimeSeries', # github or website
+  download_url = 'https://github.com/rolandojduartem/FillingTimeSeries/archive/refs/tags/v_0_8_0.tar.gz', # Download file
   keywords = ['Time Series', 'Missing values', 'Metereology', "Geophysics", "Metereological"],
   setup_requires=['wheel'],
   install_requires=[       # I get to this in a second
@@ -27,8 +27,8 @@ setup(
     'Development Status :: 4 - Beta', # "3 - Alpha", "4 - Beta" or "5 - Production/Stable"
     'Intended Audience :: Developers', # Define that your audience are developers
     'Topic :: Software Development :: Build Tools',
-    'License :: OSI Approved :: MIT License', #license
-    'Programming Language :: Python :: 3', #Pyhton versions
+    'License :: OSI Approved :: MIT License', # License
+    'Programming Language :: Python :: 3', # Pyhton versions
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',

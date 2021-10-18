@@ -1,5 +1,5 @@
 """
-Note: V 0.7.3 Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
+Note: V 0.8.0 Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
       Python version was developed by Rolando Duarte and Erick Rivera
       Centro de Investigaciones Geofísicas (CIGEFI)
       Universidad de Costa Rica (UCR)
@@ -20,17 +20,17 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRA
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from matplotlib import rcParams
-from numpy import sqrt, abs, max, delete, where, arange, all #Handling arrays
+from matplotlib.pyplot import errorbar, figure, xlabel, ylabel, title, show #Graphs
+from numpy import sqrt, abs, max, delete, where, arange, all, dot, nan #Handling arrays
 from pandas import read_csv, DataFrame, options #Handles datasets
 from sklearn.decomposition import PCA #Applies principal components transformations
 from sklearn.preprocessing import StandardScaler #Normalizes data
-from statsmodels.tsa.ar_model import AutoReg #Autoregression library
-from FillingTimeSeries.PreprocessingFillingMethods import Preprocessing # Created module for data processing purporses
-from matplotlib.pyplot import errorbar, figure, xlabel, ylabel, title, show #Graphs
+from statsmodels.regression.linear_model import OLS #Linear regression
 
-rcParams["font.family"] = "sans-serif"
+from FillingTimeSeries.PreprocessingFillingMethods import Preprocessing # Created module for data processing purporses
+
 options.mode.chained_assignment = None #Avoiding warning messages
+
 
 class AutoRegression:
     """
@@ -42,8 +42,8 @@ class AutoRegression:
         File path .txt or .csv
     """
     def __init__(self, inputPath):
-        self.df = read_csv(inputPath, header = None, sep = r"\s+", na_values = "Nan") #Getting dataset
-        self.df.columns, self.pss = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errors
+        self.df = read_csv(inputPath, header=None, sep=r"\s+", na_values="Nan") #Getting dataset
+        self.df.columns, self.preprocessing = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errorExplainedVarienceors
         self.dfRows, self.dfColumns = self.df.shape
 
     def simpleAR(self, serie, nanIndex, k):
@@ -64,15 +64,23 @@ class AutoRegression:
         serie: pandas serie
             pandas serie changing the missing values using nanIndex
         """
-        model = AutoReg(serie, lags = k, old_names = True) #Autoregression
-        model_fit = model.fit()
-
+        serie = serie.copy()
+        shiftting = DataFrame({})
+        for i in range(1, k + 1):
+            s = "Lag" + str(i)
+            shiftting[s] = serie.copy().shift(i, fill_value = nan)
+        lags = shiftting
+        
+        model = OLS(serie, lags, missing = "drop")
+        modelFitted = model.fit()
+        tempSerie = serie.copy()
         for index in nanIndex:
-            pred = model_fit.predict(start = index, end = index)
-            serie[index] = pred[index]
+            pred = dot(modelFitted.params.values, serie[index - k : index][::-1].values)
+            tempSerie[index] = pred
+        serie = tempSerie
         return serie
     
-    def ULCL(self,  k = 1, tol = 1e-1, itermax = 10, valueMin = 0.0):
+    def ULCLMethod(self,  k=1, tol=1e-1, itermax=10, valueMin=0.0):
         """
         Ulrich & Clayton autoregression method and graphs with original and filled values
         
@@ -81,7 +89,7 @@ class AutoRegression:
         k: int
             Lags value for autoregression
         tol: float
-            Tolerance value of difference between previous filled serie and current filled serie
+            Tolerance value of differenceerence between previous filled serie and current filled serie
         itermax: int
             Maximum iterations to find a filled serie that complies tolerance condition
         valueMin: float
@@ -94,27 +102,31 @@ class AutoRegression:
         """
         dfPF = DataFrame({})
         for column in self.df.columns:
-            pastValues, pastNanIndex = self.pss.changeNanMean(self.df[column]) #Missing values -> mean value
-            futureValues, futureNanIndex = self.pss.reverseChangeNanMean(self.df[column]) #Reversed dataframe
-            pastNanIndex = delete(pastNanIndex, where(pastNanIndex <= k)) #Deleting indexes values less than or equal to k value
-            futureNanIndex = delete(futureNanIndex, where(futureNanIndex <= k))
+            pastValues, pastNanIndex = self.preprocessing.changeNanMean(self.df[column]) #Missing values -> mean value
+            futureValues, futureNanIndex = self.preprocessing.reverseChangeNanMean(self.df[column]) #Reversed dataframe
+            pastNanIndex = delete(pastNanIndex, where(pastNanIndex < k)) #Deleting indexes values less than or equal to k value
+            futureNanIndex = delete(futureNanIndex, where(futureNanIndex < k))
 
             for iter in range(1, itermax + 1):
-                past_pred = self.simpleAR(serie = pastValues.copy(), nanIndex = pastNanIndex, k = k)
-                future_pred_temp = self.simpleAR(serie = futureValues.copy(), nanIndex = futureNanIndex, k = k)
-                future_pred = future_pred_temp[::-1].copy() #Reverses serie
-                future_pred.index = past_pred.index #Replacing index to original index
-                dfPF[column] = (past_pred + future_pred) / 2 #Dataframe with past and future values
-                diff = max(abs(pastValues - dfPF[column])) #Differece previous prediction and current prediction
-
-                if diff <= tol:
+                pastPred = self.simpleAR(serie = pastValues.copy(), nanIndex = pastNanIndex, k = k)
+                futurePredTemp = self.simpleAR(serie = futureValues.copy(), nanIndex = futureNanIndex, k = k)
+                futurePred = futurePredTemp[::-1].copy() #Reverses serie
+                futurePred.index = pastPred.index #Replacing index to original index
+                pastPred[pastPred.index < k] = 0
+                futurePred[futurePred.index >= (len(futurePred) - k)] = 0
+                dfPF[column] = (pastPred + futurePred) / 2 #Dataframe with past and future values
+                dfPF[column][dfPF[column].index < k] = 2 * dfPF[column][dfPF[column].index < k]
+                dfPF[column][dfPF[column].index >= (len(futurePred) - k)] = 2 * dfPF[column][dfPF[column].index >= (len(futurePred) - k)]
+                difference = max(abs(pastValues - dfPF[column])) #differenceerece previous prediction and current prediction
+                if difference <= tol:
                     break
                 else:
                     pastValues = dfPF[column].copy()
-                    futureValues, _ = self.pss.reverseChangeNanMean(dfPF[column])
+                    futureValues, _ = self.preprocessing.reverseChangeNanMean(dfPF[column])
             dfPF[column][dfPF[column] < valueMin] = valueMin
-        
+
         return dfPF
+
 
 class PrincipalComponentAnalysis:
     """
@@ -126,37 +138,42 @@ class PrincipalComponentAnalysis:
         File path .txt or .csv
     """
     def __init__(self, inputPath):
-        self.df = read_csv(inputPath, header = None, sep = r"\s+", na_values = "Nan") #Getting dataset
-        self.df.columns, self.pss = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errors
+        self.df = read_csv(inputPath, header=None, sep=r"\s+", na_values="Nan") #Getting dataset
+        self.df.columns, self.preprocessing = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errorExplainedVarienceors
         self.dfRows, self.dfColumns = self.df.shape
-        self.dfMean, self.nanIndex_columns = self.pss.changeDfNanMean(self.df)
+        self.dfMean, self.nanIndex_columns = self.preprocessing.changeDfNanMean(self.df)
     
     def checkPrincipalComponents(self):
         """
-        Graphs explained variance ratio of principal components
+        Graphs explained variance of principal components
 
         Returns
         -------
-        upperRange: int
+        upperError: int
             Maximum value to choose principal components 
         """
         scale = StandardScaler()
-        dfMeanS = scale.fit_transform(self.dfMean)
+        dfMeanScaled = scale.fit_transform(self.dfMean)
         pca = PCA(n_components = self.dfColumns, copy = True, svd_solver = "full", random_state = 0)
-        pca.fit(dfMeanS)
-        evr = pca.explained_variance_ratio_
-        err = evr * sqrt(2 / self.dfRows)
-        xRange = arange(1, len(evr) + 1)
-        upperRange = len(evr) - 1
+        pca.fit(dfMeanScaled)
+        explainedVariance = pca.explained_variance_
+        errorExplainedVarience = explainedVariance * sqrt(2 / self.dfRows)
+        components = arange(1, len(explainedVariance) + 1)
+        upperError = len(explainedVariance) - 1
+
         figure(figsize = (20, 20))
-        errorbar(xRange, evr, yerr =  err, fmt = "o", color = "#9b6dff", ecolor = "black", capsize = 6)
+        errorbar(components, explainedVariance, 
+                                    yerr=errorExplainedVarience, fmt="o", color="#9b6dff", 
+                                    ecolor="black", capsize=6,
+                                    )
         title("Explained variance ratio vs. principal components")
         xlabel("Principal components")
         ylabel("Explained variance ratio")
         show()
-        return upperRange
+
+        return upperError
     
-    def PCAMethod(self, components = 1, tol = 1e-1, itermax = 10, valueMin = 0.0):
+    def PCAMethod(self, components=1, tol=1e-1, itermax=10, valueMin=0.0):
         """
         Principal components method
         
@@ -165,7 +182,7 @@ class PrincipalComponentAnalysis:
         components: int
             principal component number
         tol: float
-            Tolerance value of difference between previous filled dataframe and current filled dataframe
+            Tolerance value of differenceerence between previous filled dataframe and current filled dataframe
         itermax: int
             Maximum iterations to find a filled dataframe that complies tolerance condition
         valueMin: float
@@ -186,13 +203,14 @@ class PrincipalComponentAnalysis:
             dfFitS = pca.fit_transform(dfPastS)
             dfFitS = pca.inverse_transform(dfFitS)
             dfFit = scale.inverse_transform(dfFitS)
+
             #Changing values in nan indexes using principal components
             for column in dfActual.columns:
                 for index in self.nanIndex_columns[int(column)]:
                     dfActual[column][index] = dfFit[index, int(column)]
-            diff = abs(dfActual - dfPast).max(axis = 0)
+            difference = abs(dfActual - dfPast).max(axis = 0)
 
-            if all(diff <= tol):
+            if all(difference <= tol):
                 break
             else:
                 dfPast = dfActual.copy()

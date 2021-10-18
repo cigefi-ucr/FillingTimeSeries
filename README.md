@@ -10,7 +10,7 @@
 Filling Time Series is a Python package to help professionals work with geophysical time series by filling missing values in their data developed at the Centro de Investigaciones Geofísicas (CIGEFI), Universidad de Costa Rica (UCR).
 
 ## Last updates
-- Documentation is completed in the code
+- Fixing Ulrych and Clayton Method (Alfaro & Soley, 2009)(Ureña, Alfaro & Soley, 2016)
 
 ## Documentation
 Documentation will be available soon.
@@ -25,6 +25,8 @@ Documentation will be available soon.
 - [Scikit-learn](https://scikit-learn.org) For principal-components-based method
 - [Statsmodels](https://www.statsmodels.org/) For autoregression-based method
 - [Matplotlib](https://matplotlib.org/) Plotting data
+- [Pandas](https://pandas.pydata.org/) Data handler
+- [Numpy](https://numpy.org/) Mathematical operations in arrays
 
 ## Installation
 
