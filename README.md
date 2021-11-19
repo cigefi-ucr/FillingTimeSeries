@@ -1,4 +1,4 @@
-# Filling Time Series
+# Filling Time Series (v.0.9.0)
 
 ## Filling missing values in geophysical time series
 
@@ -7,10 +7,12 @@
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) [![PyPI pyversions](https://img.shields.io/pypi/pyversions/FillingTimeSeries.svg)](https://pypi.python.org/pypi/FillingTimeSeries/) [![PyPI status](https://img.shields.io/pypi/status/FillingTimeSeries.svg)](https://pypi.python.org/pypi/FillingTimeSeries/) [![PyPI license](https://img.shields.io/pypi/l/FillingTimeSeries.svg)](https://pypi.python.org/pypi/FillingTimeSeries/)
 
 ## About Filling Time Series
-Filling Time Series is a Python package to help professionals work with geophysical time series by filling missing values in their data developed at the Centro de Investigaciones Geofísicas (CIGEFI), Universidad de Costa Rica (UCR).
+Filling Time Series is a Python package to help the users to work with geophysical time series by filling missing values in their data. Filling Time Series was developed at the Centro de Investigaciones Geofísicas (CIGEFI), Universidad de Costa Rica (UCR).
 
 ## Last updates
-- Fixing Ulrych and Clayton Method (Alfaro & Soley, 2009)(Ureña, Alfaro & Soley, 2016)
+- Added new method: ComponentsAutoregression applies autoregression method, then, the principal components method to fill the time series.
+- Small fixes in the Scree graph.
+- Renaming some classes, please, check documentation.
 
 ## Documentation
 Documentation will be available soon.
@@ -19,6 +21,7 @@ Documentation will be available soon.
 
 - Autoregression-based method
 - Principal-components-based method
+- Full method (Autoregression - Principal components)
 
 ## Dependencies
 
