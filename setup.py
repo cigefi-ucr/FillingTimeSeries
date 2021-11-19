@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 setup(
   name = 'FillingTimeSeries',    
   packages = ['FillingTimeSeries'], 
-  version = '0.9.0',   
+  version = '0.9.1',   
   license='MIT', # License from here: https://help.github.com/articles/licensing-a-repository
   description = 'Filling Time series: Package to fill missing values in geophysical time series in Python', # Short description
   long_description = long_description,
@@ -15,7 +15,7 @@ setup(
   author = 'Rolando Jesus Duarte Mejias, Erick Rivera Fernandez',    
   author_email = 'rolando.duartemejias@ucr.ac.cr',
   url = 'https://github.com/rolandojduartem/FillingTimeSeries', # github or website
-  download_url = 'https://github.com/rolandojduartem/FillingTimeSeries/archive/refs/tags/v_0_9_0.tar.gz', # Download file
+  download_url = 'https://github.com/rolandojduartem/FillingTimeSeries/archive/refs/tags/v_0_9_1.tar.gz', # Download file
   keywords = ['Time Series', 'Missing values', 'Metereology', "Geophysics", "Metereological"],
   setup_requires=['wheel'],
   install_requires=[       # I get to this in a second

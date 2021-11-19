@@ -1,2 +1,2 @@
-from FillingTimeSeries.FillingMethods import AutoRegression, PrincipalComponentAnalysis 
+from FillingTimeSeries.FillingMethods import PrincipalComponentAnalysis, Autoregression, ComponentsAutoregression
 #These classes will be available to the user
