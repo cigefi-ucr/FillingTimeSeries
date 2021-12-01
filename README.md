@@ -1,4 +1,4 @@
-# Filling Time Series (v.0.9.1)
+# Filling Time Series (v.0.9.2)
 
 ## Filling missing values in geophysical time series
 
@@ -10,9 +10,7 @@
 Filling Time Series is a Python package to help the users to work with geophysical time series by filling missing values in their data. Filling Time Series was developed at the Centro de Investigaciones Geofísicas (CIGEFI), Universidad de Costa Rica (UCR).
 
 ## Last updates
-- Added new method: ComponentsAutoregression applies autoregression method, then, the principal components method to fill the time series.
-- Small fixes in the Scree graph.
-- Renaming some classes, please, check documentation.
+- Fixing the error bar calculation.
 
 ## Documentation
 Documentation will be available soon.
@@ -43,6 +41,10 @@ pip install FillingTimeSeries
 Bug reports can be submitted to the issue tracker at:
 
 [https://github.com/rolandojduartem/FillingTimeSeries/issues](https://github.com/rolandojduartem/FillingTimeSeries/issues)
+
+## References
+- Alfaro, E., & Soley, J. (2009). Descripción de dos métodos de rellenado de datos ausentes en series de tiempo metereológicos. Revista de matemática: Teoría y Aplicaciones, 16, 60 - 75.
+- Ureña, P., Alfaro, E., & Soley, J. (2016). Propuestas metodológicas para el rellenado de datos ausentes en series de tiempo geofísicas. Guía Práctica de uso. Universidad de Costa Rica.
 
 ## License
 

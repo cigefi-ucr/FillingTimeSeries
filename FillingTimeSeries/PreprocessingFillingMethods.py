@@ -1,5 +1,5 @@
 """
-Note: V 0.9.1 Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
+Note: V 0.9.2 Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
       Python version was developed by Rolando Duarte and Erick Rivera
       Centro de Investigaciones Geofísicas (CIGEFI)
       Universidad de Costa Rica (UCR)

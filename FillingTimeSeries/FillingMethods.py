@@ -1,5 +1,5 @@
 """
-Note: V 0.9.1 Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
+Note: V 0.9.2 Originally, filling data methods was developed by Eric Alfaro and Javier Soley in SCILAB
       Python version was developed by Rolando Duarte and Erick Rivera
       Centro de Investigaciones Geofísicas (CIGEFI)
       Universidad de Costa Rica (UCR)
@@ -154,25 +154,33 @@ class PrincipalComponentAnalysis:
         upperError: int
             Maximum value to choose principal components 
         """
+        #Scalating to get the best performance using PCA
         scale = StandardScaler()
         dfMeanScaled = scale.fit_transform(self.dfMean)
         pca = PCA(n_components = self.dfColumns, copy = True, svd_solver = "full", random_state = 0)
-        pca.fit(dfMeanScaled)
+        vectorsPCA = pca.fit_transform(dfMeanScaled)
         explainedVariance = pca.explained_variance_
-        errorExplainedVarience = explainedVariance * sqrt(2 / self.dfRows)
+        errorExplainedVarience = []
+
+        #Calculating error bars
+        for index in arange(0, len(explainedVariance)):
+            dfComponents = DataFrame({"Original": vectorsPCA[:, index]})
+            dfComponents["Shift"] = dfComponents.Original.shift(1)
+            corr = dfComponents.corr().iloc[0, 1]
+            nEffective = self.dfRows * (1 - corr**2) / (1 + corr**2)
+            errorExplainedVarience.append(explainedVariance[index] * sqrt(2 / nEffective))
         components = arange(1, len(explainedVariance) + 1)
         upperError = len(explainedVariance) - 1
 
-        figure(figsize = (20, 20))
+        #Plotting eigenvalues and principal components
         errorbar(components, explainedVariance, 
-                                    yerr=errorExplainedVarience, fmt="o", color="#9b6dff", 
-                                    ecolor="black", capsize=6,
+                                    yerr=errorExplainedVarience, fmt="D", color="green", 
+                                    ecolor="red", capsize=10,
                                     )
         title("Explained variance vs. principal components")
         xlabel("Principal components")
         ylabel("Explained variance")
         show()
-
         return upperError
     
     def PCAMethod(self, components=1, tol=1e-1, itermax=10, valueMin=0.0):
@@ -247,7 +255,8 @@ class ComponentsAutoregression:
         upperError: int
             Maximum value to choose principal components 
         """
-        return PrincipalComponentAnalysis(self.df).checkPrincipalComponents()
+        upperError = PrincipalComponentAnalysis(self.df).checkPrincipalComponents()
+        return upperError
     
     def FullMethod(self, lags=1, components=1, tol=1e-1, itermax=10, valueMin=0.0):
         """
