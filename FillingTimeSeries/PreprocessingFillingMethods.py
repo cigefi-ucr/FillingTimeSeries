@@ -20,9 +20,6 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRA
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import pandas as pd #Handling datasets
-
-
 class Preprocessing:
         """
         Preprocesses dataframe to change missing values to mean values.
