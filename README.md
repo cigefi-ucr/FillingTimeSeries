@@ -1,6 +1,9 @@
-# Filling Time Series (v.0.9.2)
+# Filling Time Series (v.1.0.0)
 
 ## Filling missing values in geophysical time series
+### Contact
+- Rolando Jesus Duarte Mejias (rolando.duartemejias@ucr.ac.cr)
+- Erick Rivera Fernandez (erick.rivera@ucr.ac.cr)
 
 ![FTS|FillingTimeSeries](https://repository-images.githubusercontent.com/404879203/f4deb7ec-6b24-4ca9-89eb-f1efc8d2fd55)
 
@@ -10,10 +13,10 @@
 Filling Time Series is a Python package to help the users to work with geophysical time series by filling missing values in their data. Filling Time Series was developed at the Centro de Investigaciones Geofísicas (CIGEFI), Universidad de Costa Rica (UCR).
 
 ## Last updates
-- Fixing the error bar calculation.
+- Stable version.
 
 ## Documentation
-Documentation will be available soon.
+The documentation is available on [https://github.com/cigefi-ucr/FillingTimeSeriesGUI](https://github.com/cigefi-ucr/FillingTimeSeriesGUI)
 
 ## Features
 
@@ -36,15 +39,17 @@ Documentation will be available soon.
 ```
 pip install FillingTimeSeries
 ```
+- Graphical interface:
+Visit  [https://github.com/cigefi-ucr/FillingTimeSeriesGUI](https://github.com/cigefi-ucr/FillingTimeSeriesGUI)
 
 ## Bug report
 Bug reports can be submitted to the issue tracker at:
 
-[https://github.com/rolandojduartem/FillingTimeSeries/issues](https://github.com/rolandojduartem/FillingTimeSeries/issues)
+[https://github.com/cigefi-ucr/FillingTimeSeries/issues](https://github.com/cigefi-ucr/FillingTimeSeries/issues)
 
 ## References
-- Alfaro, E., & Soley, J. (2009). Descripción de dos métodos de rellenado de datos ausentes en series de tiempo metereológicos. Revista de matemática: Teoría y Aplicaciones, 16, 60 - 75.
-- Ureña, P., Alfaro, E., & Soley, J. (2016). Propuestas metodológicas para el rellenado de datos ausentes en series de tiempo geofísicas. Guía Práctica de uso. Universidad de Costa Rica.
+- Alfaro, E., & Soley, J. (2009). Descripcion de dos metodos de rellenado de datos ausentes en series de tiempo metereologicos. Revista de matematica: Teoria y Aplicaciones, 16, 60 - 75.
+- Urena, P., Alfaro, E., & Soley, J. (2016). Propuestas metodologicas para el rellenado de datos ausentes en series de tiempo geofisicas. Guia Practica de uso. Universidad de Costa Rica.
 
 ## License
 

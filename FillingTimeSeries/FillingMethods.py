@@ -20,7 +20,7 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRA
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from matplotlib.pyplot import errorbar, figure, xlabel, ylabel, title, show #Graphs
+from matplotlib.pyplot import errorbar, xlabel, ylabel, title, show #Graphs
 from numpy import sqrt, abs, max, delete, where, arange, all, dot, nan #Handling arrays
 from pandas import read_csv, DataFrame, options #Handles datasets
 from sklearn.decomposition import PCA #Applies principal components transformations
@@ -41,10 +41,13 @@ class Autoregression:
         Dataframe
     """
     def __init__(self, df):
-        self.df = df.copy()
-        self.df.columns, self.preprocessing = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errorExplainedVarienceors
-        self.dfRows, self.dfColumns = self.df.shape
-
+        if isinstance(df, DataFrame):
+            self.df = df.copy()
+            self.df.columns, self.preprocessing = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errorExplainedVarienceors
+            self.dfRows, self.dfColumns = self.df.shape
+        else:
+            raise AttributeError("df must be a pandas dataframe")
+            
     def simpleAR(self, serie, nanIndex, k):
         """
         Applies a simple autoregression
@@ -99,32 +102,39 @@ class Autoregression:
         dfPF: pandas-dataframe
             Pandas dataframe using past and future values to fill missing values
         """
-        dfPF = DataFrame({})
-        for column in self.df.columns:
-            pastValues, pastNanIndex = self.preprocessing.changeNanMean(self.df[column]) #Missing values -> mean value
-            futureValues, futureNanIndex = self.preprocessing.reverseChangeNanMean(self.df[column]) #Reversed dataframe
-            pastNanIndex = delete(pastNanIndex, where(pastNanIndex < lags)) #Deleting indexes values less than or equal to k value
-            futureNanIndex = delete(futureNanIndex, where(futureNanIndex < lags))
+        if lags <= 0:
+            raise AttributeError("lags must be 'int' greater than 0")
+        elif tol < 0:
+            raise AttributeError("tol must be 'float' equal or greater than 0")
+        elif itermax <= 0:
+            raise AttributeError("itermax must be 'int' greater than 0")
+        else:
+            dfPF = DataFrame({})
+            for column in self.df.columns:
+                pastValues, pastNanIndex = self.preprocessing.changeNanMean(self.df[column]) #Missing values -> mean value
+                futureValues, futureNanIndex = self.preprocessing.reverseChangeNanMean(self.df[column]) #Reversed dataframe
+                pastNanIndex = delete(pastNanIndex, where(pastNanIndex < lags)) #Deleting indexes values less than or equal to k value
+                futureNanIndex = delete(futureNanIndex, where(futureNanIndex < lags))
 
-            for iter in range(1, itermax + 1):
-                pastPred = self.simpleAR(serie = pastValues.copy(), nanIndex = pastNanIndex, k = lags)
-                futurePredTemp = self.simpleAR(serie = futureValues.copy(), nanIndex = futureNanIndex, k = lags)
-                futurePred = futurePredTemp[::-1].copy() #Reverses serie
-                futurePred.index = pastPred.index #Replacing index to original index
-                pastPred[pastPred.index < lags] = 0
-                futurePred[futurePred.index >= (len(futurePred) - lags)] = 0
-                dfPF[column] = (pastPred + futurePred) / 2 #Dataframe with past and future values
-                dfPF[column][dfPF[column].index < lags] = 2 * dfPF[column][dfPF[column].index < lags]
-                dfPF[column][dfPF[column].index >= (len(futurePred) - lags)] = 2 * dfPF[column][dfPF[column].index >= (len(futurePred) - lags)]
-                difference = max(abs(pastValues - dfPF[column])) #differenceerece previous prediction and current prediction
-                if difference <= tol:
-                    break
-                else:
-                    pastValues = dfPF[column].copy()
-                    futureValues, _ = self.preprocessing.reverseChangeNanMean(dfPF[column])
-            dfPF[column][dfPF[column] < valueMin] = valueMin
+                for iter in range(1, itermax + 1):
+                    pastPred = self.simpleAR(serie = pastValues.copy(), nanIndex = pastNanIndex, k = lags)
+                    futurePredTemp = self.simpleAR(serie = futureValues.copy(), nanIndex = futureNanIndex, k = lags)
+                    futurePred = futurePredTemp[::-1].copy() #Reverses serie
+                    futurePred.index = pastPred.index #Replacing index to original index
+                    pastPred[pastPred.index < lags] = 0
+                    futurePred[futurePred.index >= (len(futurePred) - lags)] = 0
+                    dfPF[column] = (pastPred + futurePred) / 2 #Dataframe with past and future values
+                    dfPF[column][dfPF[column].index < lags] = 2 * dfPF[column][dfPF[column].index < lags]
+                    dfPF[column][dfPF[column].index >= (len(futurePred) - lags)] = 2 * dfPF[column][dfPF[column].index >= (len(futurePred) - lags)]
+                    difference = max(abs(pastValues - dfPF[column])) #differenceerece previous prediction and current prediction
+                    if difference <= tol:
+                        break
+                    else:
+                        pastValues = dfPF[column].copy()
+                        futureValues, _ = self.preprocessing.reverseChangeNanMean(dfPF[column])
+                dfPF[column][dfPF[column] < valueMin] = valueMin
 
-        return dfPF
+            return dfPF
 
 
 class PrincipalComponentAnalysis:
@@ -137,13 +147,16 @@ class PrincipalComponentAnalysis:
         Dataframe
     """
     def __init__(self, df, **kwargs):
-        self.df = df.copy()
-        self.df.columns, self.preprocessing = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errorExplainedVarienceors
-        self.dfRows, self.dfColumns = self.df.shape
-        if "nanIndex_columns" in kwargs.keys():
-            self.dfMean, self.nanIndex_columns = self.df, kwargs["nanIndex_columns"]
+        if isinstance(df, DataFrame):
+            self.df = df.copy()
+            self.df.columns, self.preprocessing = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errorExplainedVarienceors
+            self.dfRows, self.dfColumns = self.df.shape
+            if "nanIndex_columns" in kwargs.keys():
+                self.dfMean, self.nanIndex_columns = self.df, kwargs["nanIndex_columns"]
+            else:
+                self.dfMean, self.nanIndex_columns = self.preprocessing.changeDfNanMean(self.df)
         else:
-            self.dfMean, self.nanIndex_columns = self.preprocessing.changeDfNanMean(self.df)
+            raise AttributeError("df must be a pandas dataframe")
     
     def checkPrincipalComponents(self):
         """
@@ -183,7 +196,7 @@ class PrincipalComponentAnalysis:
         show()
         return upperError
     
-    def PCAMethod(self, components=1, tol=1e-1, itermax=10, valueMin=0.0):
+    def PCAMethod(self, components=1, tol=1e-3, itermax=1000, valueMin=0.0):
         """
         Principal components method
         
@@ -203,32 +216,37 @@ class PrincipalComponentAnalysis:
         dfActual: pandas dataframe
             pandas dataframe using principal components to fill missing values
         """
-        dfPast = self.dfMean.copy()
-        dfActual = self.dfMean.copy()
-        
-        for iters in range(1, itermax + 1):
-            scale = StandardScaler()
-            dfPastS = scale.fit_transform(dfPast)
-            pca = PCA(n_components = components, copy = True, svd_solver = "arpack", random_state = 0)
-            dfFitS = pca.fit_transform(dfPastS)
-            dfFitS = pca.inverse_transform(dfFitS)
-            dfFit = scale.inverse_transform(dfFitS)
+        if tol < 0:
+            raise AttributeError("tol must be 'float' equal or greater than 0")
+        elif itermax <= 0:
+            raise AttributeError("itermax must be 'int' greater than 0")
+        else:
+            dfPast = self.dfMean.copy()
+            dfActual = self.dfMean.copy()
+            
+            for iters in range(1, itermax + 1):
+                scale = StandardScaler()
+                dfPastS = scale.fit_transform(dfPast)
+                pca = PCA(n_components = components, copy = True, svd_solver = "arpack", random_state = 0)
+                dfFitS = pca.fit_transform(dfPastS)
+                dfFitS = pca.inverse_transform(dfFitS)
+                dfFit = scale.inverse_transform(dfFitS)
 
-            #Changing values in nan indexes using principal components
-            for columnIndex in range(0, len(dfActual.columns)):
-                for index in self.nanIndex_columns[columnIndex]:
-                    dfActual[dfActual.columns[columnIndex]][index] = dfFit[index, columnIndex]
-            difference = abs(dfActual - dfPast).max(axis = 0)
+                #Changing values in nan indexes using principal components
+                for columnIndex in range(0, len(dfActual.columns)):
+                    for index in self.nanIndex_columns[columnIndex]:
+                        dfActual[dfActual.columns[columnIndex]][index] = dfFit[index, columnIndex]
+                difference = abs(dfActual - dfPast).max(axis = 0)
 
-            if all(difference <= tol):
-                break
-            else:
-                dfPast = dfActual.copy()
+                if all(difference <= tol):
+                    break
+                else:
+                    dfPast = dfActual.copy()
 
-        for column in dfActual.columns:
-            dfActual[column][dfActual[column] < valueMin] = valueMin
+            for column in dfActual.columns:
+                dfActual[column][dfActual[column] < valueMin] = valueMin
 
-        return dfActual
+            return dfActual
 
 
 class ComponentsAutoregression:
@@ -241,10 +259,13 @@ class ComponentsAutoregression:
         Dataframe
     """
     def __init__(self, df):
-        self.df = df.copy()
-        self.df.columns, self.preprocessing = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errors
-        self.dfRows, self.dfColumns = self.df.shape
-        _, self.nanIndex_columns = self.preprocessing.changeDfNanMean(self.df)
+        if isinstance(df, DataFrame):
+            self.df = df.copy()
+            self.df.columns, self.preprocessing = self.df.columns.astype(str), Preprocessing() #Avoiding numpy errors
+            self.dfRows, self.dfColumns = self.df.shape
+            _, self.nanIndex_columns = self.preprocessing.changeDfNanMean(self.df)
+        else:
+            raise AttributeError("df must be a pandas dataframe")
 
     def checkPrincipalComponents(self):
         """
@@ -258,7 +279,7 @@ class ComponentsAutoregression:
         upperError = PrincipalComponentAnalysis(self.df).checkPrincipalComponents()
         return upperError
     
-    def FullMethod(self, lags=1, components=1, tol=1e-1, itermax=10, valueMin=0.0):
+    def FullMethod(self, lags=1, components=1, tol=1e-3, itermax=1000, valueMin=0.0):
         """
         Full method
         
@@ -280,8 +301,17 @@ class ComponentsAutoregression:
         dfPCA: pandas dataframe
             pandas dataframe using autoregression and principal components to fill missing values
         """
-        AR = Autoregression(self.df)
-        dfAR = AR.ULCLMethod(lags = lags, tol = tol, itermax = itermax, valueMin = valueMin)
-        pca = PrincipalComponentAnalysis(dfAR, nanIndex_columns = self.nanIndex_columns)
-        dfPCA = pca.PCAMethod(components = components, tol = tol, itermax = itermax, valueMin = valueMin)
-        return dfPCA  
+        if lags <= 0:
+            raise AttributeError("lags must be 'int' greater than 0")
+        elif components <= 0:
+            raise AttributeError("components must be 'int' greater than 0")
+        elif tol < 0:
+            raise AttributeError("tol must be 'float' equal or greater than 0")
+        elif itermax <= 0:
+            raise AttributeError("itermax must be 'int' greater than 0")
+        else:
+            AR = Autoregression(self.df)
+            dfAR = AR.ULCLMethod(lags = lags, tol = tol, itermax = itermax, valueMin = valueMin)
+            pca = PrincipalComponentAnalysis(dfAR, nanIndex_columns = self.nanIndex_columns)
+            dfPCA = pca.PCAMethod(components = components, tol = tol, itermax = itermax, valueMin = valueMin)
+            return dfPCA  
